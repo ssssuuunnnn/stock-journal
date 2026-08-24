@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+  body { margin: 0; background: #f7f6f9; color: #4b4553; font: 16px/1.5 system-ui, 'Segoe UI', Roboto, 'PingFang TC', 'Noto Sans TC', sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: #aa3bff; }
+  a:hover { color: #7c1fd6; }
+</style>
+</helmet>
+<div style="min-height:100svh;background:#f7f6f9">
+  <div style="max-width:860px;margin:0 auto;padding:24px 20px 64px">
+    <header>
+      <h1 style="margin:0 0 4px;font-size:28px;font-weight:600;color:#08060d">📈 存股日記</h1>
+      <p style="margin:0;color:#4b4553;opacity:0.7;font-size:14px">記錄每一次存股，追蹤目標達成進度</p>
+    </header>
+
+    <nav style="display:flex;gap:8px;margin:24px 0 20px;border-bottom:1px solid #e5e4e7">
+      <button onClick="{{ showGoals }}" style="appearance:none;border:none;background:none;font:inherit;font-weight:500;padding:10px 4px;margin-bottom:-1px;border-bottom:2px solid transparent;cursor:pointer;color:{{ goalsColor }};border-bottom-color:{{ goalsBorder }}">存股目標</button>
+      <button onClick="{{ showRecords }}" style="appearance:none;border:none;background:none;font:inherit;font-weight:500;padding:10px 4px;margin-bottom:-1px;border-bottom:2px solid transparent;cursor:pointer;color:{{ recordsColor }};border-bottom-color:{{ recordsBorder }}">買入紀錄</button>
+    </nav>
+
+    <main>
+      <sc-if value="{{ isGoals }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <form style="background:#fff;border:1px solid #e5e4e7;border-radius:12px;padding:20px;box-shadow:rgba(0,0,0,0.06) 0 4px 12px -2px;margin-bottom:20px">
+            <h2 style="font-size:18px;font-weight:600;color:#08060d;margin:0 0 8px">新增存股目標</h2>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <label style="flex:1;min-width:140px;display:block;font-size:13px;font-weight:500;margin-top:12px;color:#4b4553">股票代號 *
+                <input placeholder="例如 0050" style="display:block;width:100%;margin-top:4px;padding:8px 10px;font:inherit;border:1px solid #e5e4e7;border-radius:8px;background:#f7f6f9;color:#08060d">
+              </label>
+              <label style="flex:1;min-width:140px;display:block;font-size:13px;font-weight:500;margin-top:12px;color:#4b4553">股票名稱
+                <input placeholder="例如 元大台灣50" style="display:block;width:100%;margin-top:4px;padding:8px 10px;font:inherit;border:1px solid #e5e4e7;border-radius:8px;background:#f7f6f9;color:#08060d">
+              </label>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <label style="flex:1;min-width:140px;display:block;font-size:13px;font-weight:500;margin-top:12px;color:#4b4553">目標張數 / 股數 *
+                <input type="number" placeholder="例如 10" style="display:block;width:100%;margin-top:4px;padding:8px 10px;font:inherit;border:1px solid #e5e4e7;border-radius:8px;background:#f7f6f9;color:#08060d">
+              </label>
+              <label style="flex:1;min-width:140px;display:block;font-size:13px;font-weight:500;margin-top:12px;color:#4b4553">單位
+                <select style="display:block;width:100%;margin-top:4px;padding:8px 10px;font:inherit;border:1px solid #e5e4e7;border-radius:8px;background:#f7f6f9;color:#08060d">
+                  <option>張</option>
+                  <option>股</option>
+                </select>
+              </label>
+            </div>
+            <label style="display:block;font-size:13px;font-weight:500;margin-top:12px;color:#4b4553">備註
+              <input placeholder="選填，例如：退休金存股計畫" style="display:block;width:100%;margin-top:4px;padding:8px 10px;font:inherit;border:1px solid #e5e4e7;border-radius:8px;background:#f7f6f9;color:#08060d">
+            </label>
+            <button type="submit" style="margin-top:16px;padding:9px 18px;border:none;border-radius:8px;background:#aa3bff;color:#fff;font:inherit;font-weight:600;cursor:pointer" style-hover="background:#7c1fd6">新增目標</button>
+          </form>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px">
+            <sc-for list="{{ goals }}" as="g" hint-placeholder-count="4">
+              <div style="background:#fff;border:1px solid #e5e4e7;border-radius:12px;padding:20px;box-shadow:rgba(0,0,0,0.06) 0 4px 12px -2px;margin-bottom:0">
+                <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
+                  <div>
+                    <strong style="color:#08060d">{{ g.code }}</strong><span style="color:#4b4553;opacity:0.7;font-size:14px"> {{ g.name }}</span>
+                  </div>
+                  <button style="appearance:none;border:none;background:none;color:#d6336c;font:inherit;font-size:13px;cursor:pointer;padding:0">刪除</button>
+                </div>
+                <div style="height:8px;border-radius:999px;background:rgba(170,59,255,0.1);overflow:hidden">
+                  <div style="height:100%;background:#aa3bff;border-radius:999px;width:{{ g.pctW }}"></div>
+                </div>
+                <div style="display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;margin-top:8px;font-size:14px">
+                  <span>{{ g.owned }}</span>
+                  <span style="color:#4b4553;opacity:0.7;font-size:14px">/ 目標 {{ g.target }}</span>
+                  <span style="margin-left:auto;font-weight:600;color:#7c1fd6">{{ g.pct }}</span>
+                </div>
+                <p style="color:#4b4553;opacity:0.7;font-size:14px;margin:10px 0 0">{{ g.note }}</p>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isRecords }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <form style="background:#fff;border:1px solid #e5e4e7;border-radius:12px;padding:20px;box-shadow:rgba(0,0,0,0.06) 0 4px 12px -2px;margin-bottom:20px">
+            <h2 style="font-size:18px;font-weight:600;color:#08060d;margin:0 0 8px">新增買入紀錄</h2>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <label style="flex:1;min-width:140px;display:block;font-size:13px;font-weight:500;margin-top:12px;color:#4b4553">股票代號 *
+                <input placeholder="例如 0050" style="display:block;width:100%;margin-top:4px;padding:8px 10px;font:inherit;border:1px solid #e5e4e7;border-radius:8px;background:#f7f6f9;color:#08060d">
+              </label>
+              <label style="flex:1;min-width:140px;display:block;font-size:13px;font-weight:500;margin-top:12px;color:#4b4553">買入日期 *
+                <input type="date" style="display:block;width:100%;margin-top:4px;padding:8px 10px;font:inherit;border:1px solid #e5e4e7;border-radius:8px;background:#f7f6f9;color:#08060d">
+              </label>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap">
+              <label style="flex:1;min-width:140px;display:block;font-size:13px;font-weight:500;margin-top:12px;color:#4b4553">張數 / 股數 *
+                <input type="number" placeholder="例如 1" style="display:block;width:100%;margin-top:4px;padding:8px 10px;font:inherit;border:1px solid #e5e4e7;border-radius:8px;background:#f7f6f9;color:#08060d">
+              </label>
+              <label style="flex:1;min-width:140px;display:block;font-size:13px;font-weight:500;margin-top:12px;color:#4b4553">單位
+                <select style="display:block;width:100%;margin-top:4px;padding:8px 10px;font:inherit;border:1px solid #e5e4e7;border-radius:8px;background:#f7f6f9;color:#08060d">
+                  <option>張</option>
+                  <option>股</option>
+                </select>
+              </label>
+              <label style="flex:1;min-width:140px;display:block;font-size:13px;font-weight:500;margin-top:12px;color:#4b4553">成交價（選填）
+                <input type="number" placeholder="例如 135.5" style="display:block;width:100%;margin-top:4px;padding:8px 10px;font:inherit;border:1px solid #e5e4e7;border-radius:8px;background:#f7f6f9;color:#08060d">
+              </label>
+            </div>
+            <label style="display:block;font-size:13px;font-weight:500;margin-top:12px;color:#4b4553">備註
+              <input placeholder="選填" style="display:block;width:100%;margin-top:4px;padding:8px 10px;font:inherit;border:1px solid #e5e4e7;border-radius:8px;background:#f7f6f9;color:#08060d">
+            </label>
+            <button type="submit" style="margin-top:16px;padding:9px 18px;border:none;border-radius:8px;background:#aa3bff;color:#fff;font:inherit;font-weight:600;cursor:pointer">新增紀錄</button>
+          </form>
+
+          <div style="background:#fff;border:1px solid #e5e4e7;border-radius:12px;padding:20px;box-shadow:rgba(0,0,0,0.06) 0 4px 12px -2px;margin-bottom:20px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+              <label style="display:flex;align-items:center;gap:6px;font-size:13px">篩選股票
+                <select style="padding:6px 8px;border-radius:6px;border:1px solid #e5e4e7;background:#f7f6f9;color:#08060d;font:inherit">
+                  <option>全部</option>
+                  <option>0050</option>
+                  <option>0056</option>
+                  <option>2412</option>
+                  <option>2884</option>
+                </select>
+              </label>
+              <span style="color:#4b4553;opacity:0.7;font-size:14px">共 {{ recordCount }} 筆</span>
+            </div>
+            <div style="overflow-x:auto">
+              <table style="width:100%;border-collapse:collapse;font-size:14px">
+                <thead>
+                  <tr>
+                    <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #e5e4e7;white-space:nowrap;color:#4b4553;font-weight:600;font-size:13px">日期</th>
+                    <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #e5e4e7;white-space:nowrap;color:#4b4553;font-weight:600;font-size:13px">股票代號</th>
+                    <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #e5e4e7;white-space:nowrap;color:#4b4553;font-weight:600;font-size:13px">股數</th>
+                    <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #e5e4e7;white-space:nowrap;color:#4b4553;font-weight:600;font-size:13px">成交價</th>
+                    <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #e5e4e7;white-space:nowrap;color:#4b4553;font-weight:600;font-size:13px">金額</th>
+                    <th style="text-align:left;padding:8px 10px;border-bottom:1px solid #e5e4e7;white-space:nowrap;color:#4b4553;font-weight:600;font-size:13px">備註</th>
+                    <th style="border-bottom:1px solid #e5e4e7"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ records }}" as="r" hint-placeholder-count="7">
+                    <tr>
+                      <td style="text-align:left;padding:8px 10px;border-bottom:1px solid #e5e4e7;white-space:nowrap">{{ r.date }}</td>
+                      <td style="text-align:left;padding:8px 10px;border-bottom:1px solid #e5e4e7;white-space:nowrap">{{ r.code }}</td>
+                      <td style="text-align:left;padding:8px 10px;border-bottom:1px solid #e5e4e7;white-space:nowrap">{{ r.shares }}</td>
+                      <td style="text-align:left;padding:8px 10px;border-bottom:1px solid #e5e4e7;white-space:nowrap">{{ r.price }}</td>
+                      <td style="text-align:left;padding:8px 10px;border-bottom:1px solid #e5e4e7;white-space:nowrap">{{ r.amount }}</td>
+                      <td style="text-align:left;padding:8px 10px;border-bottom:1px solid #e5e4e7;white-space:nowrap;color:#4b4553;opacity:0.7">{{ r.note }}</td>
+                      <td style="text-align:left;padding:8px 10px;border-bottom:1px solid #e5e4e7;white-space:nowrap">
+                        <button style="appearance:none;border:none;background:none;color:#d6336c;font:inherit;font-size:13px;cursor:pointer;padding:0">刪除</button>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+
+    <footer style="text-align:center;margin-top:32px;color:#4b4553;opacity:0.7;font-size:14px">資料僅儲存在此瀏覽器（localStorage），不會上傳到任何伺服器。</footer>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const SPL = 1000;
+function fmt(n) {
+  const lots = Math.floor(n / SPL), rest = n % SPL;
+  if (lots > 0 && rest > 0) return `${lots} 張 ${rest} 股（共 ${n} 股）`;
+  if (lots > 0) return `${lots} 張（共 ${n} 股）`;
+  return `${n} 股`;
+}
+const GOALS = [
+  { code: '0050', name: '元大台灣50', target: 10000, owned: 2500, note: '退休金存股計畫' },
+  { code: '0056', name: '元大高股息', target: 20000, owned: 3000, note: '每季配息再投入' },
+  { code: '2412', name: '中華電', target: 5000, owned: 1000, note: '' },
+  { code: '2884', name: '玉山金', target: 10000, owned: 3000, note: '金融股定期定額' },
+];
+const RECORDS = [
+  { date: '2024-07-15', code: '0050', shares: 500, price: 178, note: '除息前加碼' },
+  { date: '2024-06-11', code: '0056', shares: 1000, price: 41.2, note: '' },
+  { date: '2024-05-06', code: '2884', shares: 3000, price: 26.4, note: '' },
+  { date: '2024-04-08', code: '0050', shares: 1000, price: 145.2, note: '' },
+  { date: '2024-03-01', code: '2412', shares: 1000, price: 122, note: '存股起手式' },
+  { date: '2024-02-20', code: '0056', shares: 2000, price: 36.8, note: '' },
+  { date: '2024-01-05', code: '0050', shares: 1000, price: 130.5, note: '' },
+];
+class Component extends DCLogic {
+  state = { tab: 'goals' };
+  renderVals() {
+    const isGoals = this.state.tab === 'goals';
+    return {
+      isGoals, isRecords: !isGoals,
+      showGoals: () => this.setState({ tab: 'goals' }),
+      showRecords: () => this.setState({ tab: 'records' }),
+      goalsColor: isGoals ? '#7c1fd6' : '#4b4553',
+      goalsBorder: isGoals ? '#aa3bff' : 'transparent',
+      recordsColor: isGoals ? '#4b4553' : '#7c1fd6',
+      recordsBorder: isGoals ? 'transparent' : '#aa3bff',
+      recordCount: RECORDS.length,
+      goals: GOALS.map((g) => {
+        const pct = g.target > 0 ? Math.min(100, (g.owned / g.target) * 100) : 0;
+        return { code: g.code, name: g.name, note: g.note, owned: fmt(g.owned), target: fmt(g.target), pct: pct.toFixed(1) + '%', pctW: pct + '%' };
+      }),
+      records: RECORDS.map((r) => ({
+        date: r.date, code: r.code, shares: fmt(r.shares),
+        price: r.price != null ? String(r.price) : '—',
+        amount: r.price != null ? (r.price * r.shares).toLocaleString() : '—',
+        note: r.note || '—',
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>
