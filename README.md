@@ -32,7 +32,7 @@ npm run preview   # 本機預覽建置結果
 
 1. 將專案推上 GitHub（repo 名稱建議維持 `stock-journal`，若改名要同步修改 `vite.config.js` 的 `base`）。
 2. 到 repo 的 **Settings → Pages**，將 **Source** 設為 **GitHub Actions**。
-3. push 到 `main` 後，等待 Actions 跑完即可在 `https://<你的帳號>.github.io/stock-journal/` 看到網站。
+3. push 到 `main` 後，等待 Actions 跑完即可看到網站，網址預設是 `https://<你的帳號>.github.io/stock-journal/`；若帳號的 GitHub Pages 有另外設定自訂網域（例如 `https://<你的帳號>.github.io` 綁了自訂域名），專案頁面會改用同一個網域的 `/stock-journal/` 路徑。
 
 分頁切換用瀏覽器 History API 走真正的路徑（`/stock-journal/` 存股目標、`/stock-journal/records` 買入紀錄），不是 `#` hash。GitHub Pages 是純靜態託管、不會做路徑轉發，所以 `npm run build` 之後會自動把 `dist/index.html` 複製一份成 `dist/404.html`（見 `package.json` 的 `postbuild`）：使用者直接打開或重新整理 `/stock-journal/records` 時，GitHub Pages 會用 404.html 頂上，內容其實就是同一份 SPA，由前端路由接手顯示正確分頁。
 
