@@ -1,6 +1,13 @@
 import { useEffect } from 'react'
 
-export default function ConfirmDialog({ message, confirmLabel = '刪除', onConfirm, onCancel }) {
+export default function ConfirmDialog({
+  message,
+  confirmLabel = '刪除',
+  cancelLabel = '取消',
+  confirmVariant = 'danger',
+  onConfirm,
+  onCancel,
+}) {
   useEffect(() => {
     function onKeyDown(e) {
       if (e.key === 'Escape') onCancel()
@@ -21,9 +28,14 @@ export default function ConfirmDialog({ message, confirmLabel = '刪除', onConf
         <p id="confirm-dialog-message">{message}</p>
         <div className="modal-actions">
           <button type="button" className="btn-ghost" onClick={onCancel}>
-            取消
+            {cancelLabel}
           </button>
-          <button type="button" className="btn-danger" onClick={onConfirm} autoFocus>
+          <button
+            type="button"
+            className={confirmVariant === 'primary' ? 'btn-primary' : 'btn-danger'}
+            onClick={onConfirm}
+            autoFocus
+          >
             {confirmLabel}
           </button>
         </div>

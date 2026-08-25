@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { formatShares } from '../lib/units'
 import ConfirmDialog from './ConfirmDialog'
 
-export default function GoalList({ goals, holdingsByStock, onDelete }) {
+export default function GoalList({ goals, holdingsByStock, onEdit, onDelete }) {
   const [pendingDelete, setPendingDelete] = useState(null)
 
   if (goals.length === 0) {
@@ -15,6 +15,7 @@ export default function GoalList({ goals, holdingsByStock, onDelete }) {
         {goals.map((goal) => {
           const owned = holdingsByStock[goal.stockCode] || 0
           const pct = goal.targetShares > 0 ? Math.min(100, (owned / goal.targetShares) * 100) : 0
+          const pctColor = `color-mix(in srgb, var(--color-accent-800) ${Math.round(pct)}%, var(--color-accent-400))`
           return (
             <div className="card goal-card" key={goal.id}>
               <div className="goal-card-header">
@@ -22,9 +23,14 @@ export default function GoalList({ goals, holdingsByStock, onDelete }) {
                   <strong>{goal.stockCode}</strong>
                   {goal.stockName && <span className="muted"> {goal.stockName}</span>}
                 </div>
-                <button className="link-btn" onClick={() => setPendingDelete(goal)}>
-                  刪除
-                </button>
+                <div className="goal-card-actions">
+                  <button className="link-btn link-btn-muted" onClick={() => onEdit(goal)}>
+                    編輯
+                  </button>
+                  <button className="link-btn" onClick={() => setPendingDelete(goal)}>
+                    刪除
+                  </button>
+                </div>
               </div>
               <div className="progress-bar">
                 <div className="progress-fill" style={{ width: `${pct}%` }} />
@@ -32,7 +38,9 @@ export default function GoalList({ goals, holdingsByStock, onDelete }) {
               <div className="goal-numbers">
                 <span>{formatShares(owned)}</span>
                 <span className="muted">/ 目標 {formatShares(goal.targetShares)}</span>
-                <span className="pct">{pct.toFixed(1)}%</span>
+                <span className="pct" style={{ color: pctColor }}>
+                  {pct.toFixed(1)}%
+                </span>
               </div>
               {goal.note && <p className="muted note">{goal.note}</p>}
             </div>

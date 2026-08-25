@@ -5,6 +5,9 @@ import About from './components/About'
 import AboutAuthor from './components/AboutAuthor'
 import GoalForm from './components/GoalForm'
 import GoalList from './components/GoalList'
+import NoteDetail from './components/NoteDetail'
+import NoteForm from './components/NoteForm'
+import NoteList from './components/NoteList'
 import Overview from './components/Overview'
 import RecordForm from './components/RecordForm'
 import RecordTable from './components/RecordTable'
@@ -14,13 +17,19 @@ const TABS = [
   { key: 'overview', label: '存股總覽' },
   { key: 'goals', label: '存股目標' },
   { key: 'records', label: '買入紀錄' },
+  { key: 'notes', label: '心得紀錄' },
 ]
-// 路由（網址路徑）：goals / records / overview 三個分頁，goals、records 各自再加一個獨立的「新增」頁面
+// 路由（網址路徑）：goals / records / overview / notes 幾個分頁，goals、records、notes 各自再加獨立的「新增」頁面
 const VIEW_PATHS = {
   goals: '',
   'goals-new': 'goals/new',
+  'goals-edit': 'goals/edit',
   records: 'records',
   'records-new': 'records/new',
+  notes: 'notes',
+  'notes-new': 'notes/new',
+  'notes-edit': 'notes/edit',
+  'notes-detail': 'notes/detail',
   overview: 'overview',
   about: 'about',
   author: 'author',
@@ -56,14 +65,27 @@ function trackPageview(pathname) {
 export default function App() {
   const [goals, setGoals] = useLocalStorage('stock-daily:goals', [])
   const [records, setRecords] = useLocalStorage('stock-daily:records', [])
+  const [notes, setNotes] = useLocalStorage('stock-daily:notes', [])
   const [view, setView] = useState(() => viewFromPath(window.location.pathname))
-  const tab = view.startsWith('records')
+  const [editingGoal, setEditingGoal] = useState(null)
+  const [editingNote, setEditingNote] = useState(null)
+  const [viewingNote, setViewingNote] = useState(null)
+  // 直接連到 /goals/edit、/notes/edit、/notes/detail（例如重新整理）時沒有對應的資料可用，畫面上視同回到列表頁。
+  const effectiveView =
+    (view === 'goals-edit' && !editingGoal) ||
+    (view === 'notes-edit' && !editingNote) ||
+    (view === 'notes-detail' && !viewingNote)
+      ? view.startsWith('notes') ? 'notes' : 'goals'
+      : view
+  const tab = effectiveView.startsWith('records')
     ? 'records'
-    : view.startsWith('goals')
+    : effectiveView.startsWith('goals')
       ? 'goals'
-      : view === 'overview'
-        ? 'overview'
-        : null
+      : effectiveView.startsWith('notes')
+        ? 'notes'
+        : effectiveView === 'overview'
+          ? 'overview'
+          : null
 
   useEffect(() => {
     function onPopState() {
@@ -73,6 +95,14 @@ export default function App() {
     window.addEventListener('popstate', onPopState)
     return () => window.removeEventListener('popstate', onPopState)
   }, [])
+
+  useEffect(() => {
+    if (view === 'goals-edit' && !editingGoal) {
+      window.history.replaceState({}, '', pathForView('goals'))
+    } else if ((view === 'notes-edit' && !editingNote) || (view === 'notes-detail' && !viewingNote)) {
+      window.history.replaceState({}, '', pathForView('notes'))
+    }
+  }, [view, editingGoal, editingNote, viewingNote])
 
   function goTo(nextView) {
     if (nextView !== view) {
@@ -94,6 +124,10 @@ export default function App() {
     setGoals((prev) => [...prev, { id: createId(), createdAt: Date.now(), ...goal }])
   }
 
+  function updateGoal(id, updates) {
+    setGoals((prev) => prev.map((g) => (g.id === id ? { ...g, ...updates } : g)))
+  }
+
   function deleteGoal(id) {
     setGoals((prev) => prev.filter((g) => g.id !== id))
   }
@@ -104,6 +138,18 @@ export default function App() {
 
   function deleteRecord(id) {
     setRecords((prev) => prev.filter((r) => r.id !== id))
+  }
+
+  function addNote(note) {
+    setNotes((prev) => [...prev, { id: createId(), createdAt: Date.now(), ...note }])
+  }
+
+  function updateNote(id, updates) {
+    setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, ...updates } : n)))
+  }
+
+  function deleteNote(id) {
+    setNotes((prev) => prev.filter((n) => n.id !== id))
   }
 
   return (
@@ -132,9 +178,17 @@ export default function App() {
       </nav>
 
       <main>
-        {view === 'goals' && (
+        {effectiveView === 'goals' && (
           <>
-            <GoalList goals={goals} holdingsByStock={holdingsByStock} onDelete={deleteGoal} />
+            <GoalList
+              goals={goals}
+              holdingsByStock={holdingsByStock}
+              onEdit={(goal) => {
+                setEditingGoal(goal)
+                goTo('goals-edit')
+              }}
+              onDelete={deleteGoal}
+            />
             <div className="list-actions">
               <button type="button" className="btn-add" onClick={() => goTo('goals-new')}>
                 + 新增存股目標
@@ -144,11 +198,30 @@ export default function App() {
         )}
         {view === 'goals-new' && (
           <GoalForm
-            onAdd={(goal) => {
+            existingGoals={goals}
+            onSubmit={(goal) => {
               addGoal(goal)
               goTo('goals')
             }}
+            onEditExisting={(existingGoal) => {
+              setEditingGoal(existingGoal)
+              goTo('goals-edit')
+            }}
             onCancel={() => goTo('goals')}
+          />
+        )}
+        {view === 'goals-edit' && editingGoal && (
+          <GoalForm
+            goal={editingGoal}
+            onSubmit={(updates) => {
+              updateGoal(editingGoal.id, updates)
+              setEditingGoal(null)
+              goTo('goals')
+            }}
+            onCancel={() => {
+              setEditingGoal(null)
+              goTo('goals')
+            }}
           />
         )}
         {view === 'records' && (
@@ -168,6 +241,77 @@ export default function App() {
               goTo('records')
             }}
             onCancel={() => goTo('records')}
+          />
+        )}
+        {effectiveView === 'notes' && (
+          <>
+            <NoteList
+              notes={notes}
+              goals={goals}
+              records={records}
+              onView={(note) => {
+                setViewingNote(note)
+                goTo('notes-detail')
+              }}
+              onEdit={(note) => {
+                setEditingNote(note)
+                goTo('notes-edit')
+              }}
+              onDelete={deleteNote}
+            />
+            <div className="list-actions">
+              <button type="button" className="btn-add" onClick={() => goTo('notes-new')}>
+                + 新增心得紀錄
+              </button>
+            </div>
+          </>
+        )}
+        {view === 'notes-new' && (
+          <NoteForm
+            goals={goals}
+            records={records}
+            onSubmit={(note) => {
+              addNote(note)
+              goTo('notes')
+            }}
+            onCancel={() => goTo('notes')}
+          />
+        )}
+        {view === 'notes-edit' && editingNote && (
+          <NoteForm
+            note={editingNote}
+            goals={goals}
+            records={records}
+            onSubmit={(updates) => {
+              updateNote(editingNote.id, updates)
+              setEditingNote(null)
+              goTo('notes')
+            }}
+            onCancel={() => {
+              setEditingNote(null)
+              goTo('notes')
+            }}
+          />
+        )}
+        {view === 'notes-detail' && viewingNote && (
+          <NoteDetail
+            note={viewingNote}
+            goals={goals}
+            records={records}
+            onEdit={(note) => {
+              setViewingNote(null)
+              setEditingNote(note)
+              goTo('notes-edit')
+            }}
+            onDelete={(id) => {
+              deleteNote(id)
+              setViewingNote(null)
+              goTo('notes')
+            }}
+            onBack={() => {
+              setViewingNote(null)
+              goTo('notes')
+            }}
           />
         )}
         {view === 'overview' && (

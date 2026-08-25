@@ -1,4 +1,5 @@
 import { formatShares, formatSharesShort } from '../lib/units'
+import ContributionHeatmap from './ContributionHeatmap'
 
 export default function Overview({ goals, records, holdingsByStock }) {
   const totalOwned = Object.values(holdingsByStock).reduce((sum, n) => sum + n, 0)
@@ -62,6 +63,8 @@ export default function Overview({ goals, records, holdingsByStock }) {
         </div>
       </div>
 
+      <ContributionHeatmap records={records} />
+
       <div className="overview-columns">
         <div>
           <h3>存股目標</h3>
@@ -73,12 +76,15 @@ export default function Overview({ goals, records, holdingsByStock }) {
                 const owned = holdingsByStock[goal.stockCode] || 0
                 const goalPct =
                   goal.targetShares > 0 ? Math.min(100, (owned / goal.targetShares) * 100) : 0
+                const goalPctColor = `color-mix(in srgb, var(--color-accent-800) ${Math.round(goalPct)}%, var(--color-accent-400))`
                 return (
                   <div className="overview-goal" key={goal.id}>
                     <div className="overview-goal-header">
                       <strong>{goal.stockCode}</strong>
                       {goal.stockName && <span className="muted">{goal.stockName}</span>}
-                      <span className="overview-goal-pct">{goalPct.toFixed(1)}%</span>
+                      <span className="overview-goal-pct" style={{ color: goalPctColor }}>
+                        {goalPct.toFixed(1)}%
+                      </span>
                     </div>
                     <div className="progress-bar">
                       <div className="progress-fill" style={{ width: `${goalPct}%` }} />

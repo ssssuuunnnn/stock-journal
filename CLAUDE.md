@@ -1,0 +1,41 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project
+
+存股日記 (stock-journal) — a purely client-side React + Vite tool for tracking stock-savings goals and buy records. No backend: all data lives in the browser's `localStorage`. Deployed as a static PWA to GitHub Pages.
+
+## Commands
+
+```bash
+npm install
+npm run dev       # start Vite dev server
+npm run build     # production build to dist/ (postbuild copies dist/index.html -> dist/404.html)
+npm run preview   # serve the dist/ build locally — required to test PWA/offline/install behavior
+npm run lint       # oxlint
+```
+
+There is no test suite/framework configured in this repo.
+
+## Deployment
+
+`.github/workflows/deploy.yml` builds and deploys `dist/` to GitHub Pages automatically on every push to `main` (via `actions/deploy-pages`). There is no separate staging step — pushing to `main` is a production deploy.
+
+## Architecture
+
+**Routing without a router library.** `src/App.jsx` implements its own tiny router on top of the History API (no `#` hashes): `VIEW_PATHS` maps view keys (`goals`, `goals-new`, `records`, `records-new`, `overview`, `about`, `author`) to path segments, `viewFromPath`/`pathForView` convert between them, and `goTo()` calls `window.history.pushState` + updates state. A `popstate` listener keeps state in sync with back/forward navigation. Because GitHub Pages is static hosting with no server-side rewrites, `npm run build` copies `index.html` to `404.html` (see `postbuild` in package.json) so that a hard refresh on e.g. `/stock-journal/records` still serves the SPA, which then reads `window.location.pathname` to pick the right view.
+
+**`BASE_PATH` must stay consistent across three places** if the repo/site path ever changes: `vite.config.js`'s `BASE_PATH` const (used both for `base` and the PWA manifest's `scope`/`start_url`), and `App.jsx`'s own `BASE_PATH` derived from `import.meta.env.BASE_URL`. The GitHub repo name is `stock-journal` (see `git remote`) even though the local working directory is named `stock-daily` — don't assume they match.
+
+**State model.** Two top-level collections held in `App.jsx` via the `useLocalStorage` hook (`src/hooks/useLocalStorage.js`, a thin `useState` + `localStorage` sync wrapper): `goals` (key `stock-daily:goals`) and `records` (key `stock-daily:records`). Note the storage key prefix is `stock-daily`, not `stock-journal` — do not "fix" this to match the repo name, since it would orphan existing users' saved data. `holdingsByStock` is derived via `useMemo` by summing `records` shares per `stockCode`; goal progress bars compare this against each goal's `targetShares`.
+
+**Units.** All quantities are stored internally in shares (`lib/units.js`). The UI lets users enter either 張 (lots) or 股 (shares); `toShares()` converts on input (1 lot = 1000 shares, Taiwan convention), and `formatShares`/`formatSharesShort` convert back for display.
+
+**Components** (`src/components/`) are simple, mostly stateless-except-local-form-state presentation components fed by props from `App.jsx`: `GoalForm`/`RecordForm` (add flows, each their own route/view), `GoalList`/`RecordTable` (list + delete, each owns a `ConfirmDialog`-gated delete), `Overview` (aggregate stats + combined feed), `About`/`AboutAuthor` (static content routes). There is no global state library — everything flows down from the two `useLocalStorage`-backed arrays in `App.jsx`.
+
+**Analytics.** Since navigation uses `pushState` rather than full page loads, GA's automatic pageview-on-load doesn't fire on tab switches; `trackPageview()` in `App.jsx` manually sends a `gtag('event', 'page_view', ...)` on every `goTo()` and on `popstate`.
+
+**PWA.** Configured via `vite-plugin-pwa` in `vite.config.js` (`registerType: 'autoUpdate'`, manifest, Workbox precaching). PWA/service-worker behavior only exists in the real `npm run build` output — `npm run dev` has a no-op service worker, so installability/offline must be verified with `npm run build && npm run preview`.
+
+**`design_handoff_broadsheet/`** is a one-off design-handoff package (reference HTML mockups + proposed CSS + an `APPLY.md` with instructions) for migrating the UI to a "Broadsheet" newspaper-style design system. It's excluded from lint (`.oxlintrc.json` `ignorePatterns`) and is not part of the build — treat it as a spec to consult if asked to apply that redesign, not as live source.

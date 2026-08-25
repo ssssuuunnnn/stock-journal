@@ -15,8 +15,11 @@
   --color-neutral-700: #605d5d;
   --color-neutral-800: #444141;
 
+  --color-accent-200: #cbeeff; /* 熱力圖強度色階，取自 design reference 的 accent ramp */
+  --color-accent-400: #62c5ee;
   --color-accent-600: #1186ac;
   --color-accent-700: #006786;
+  --color-accent-800: #004961;
   --color-accent-2-700: #aa0b56;
   --color-process-yellow: #edbb00; /* 疊印數字（.overview-total）的第三個印版用色 */
 
