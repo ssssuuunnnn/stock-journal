@@ -15,7 +15,7 @@ export default function NoteList({ notes, goals, records, onView, onEdit, onDele
   const [pendingDelete, setPendingDelete] = useState(null)
 
   if (notes.length === 0) {
-    return <p className="empty-hint">還沒有任何心得紀錄，按下面的按鈕寫下第一篇吧。</p>
+    return <p className="empty-hint">還沒有任何心得筆記，按下面的按鈕寫下第一篇吧。</p>
   }
 
   const sorted = [...notes].sort((a, b) => b.createdAt - a.createdAt)
@@ -56,7 +56,7 @@ export default function NoteList({ notes, goals, records, onView, onEdit, onDele
       </div>
       {pendingDelete && (
         <ConfirmDialog
-          message="確定要刪除這篇心得紀錄嗎？"
+          message="確定要刪除這篇心得筆記嗎？"
           onConfirm={() => {
             onDelete(pendingDelete.id)
             setPendingDelete(null)

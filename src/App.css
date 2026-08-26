@@ -388,7 +388,7 @@ td {
 }
 tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparent); }
 
-/* — 心得紀錄 — */
+/* — 心得筆記 — */
 .note-list {
   display: flex;
   flex-direction: column;

@@ -17,7 +17,7 @@ const TABS = [
   { key: 'overview', label: '存股總覽' },
   { key: 'goals', label: '存股目標' },
   { key: 'records', label: '買入紀錄' },
-  { key: 'notes', label: '心得紀錄' },
+  { key: 'notes', label: '心得筆記' },
 ]
 // 路由（網址路徑）：goals / records / overview / notes 幾個分頁，goals、records、notes 各自再加獨立的「新增」頁面
 const VIEW_PATHS = {
@@ -261,7 +261,7 @@ export default function App() {
             />
             <div className="list-actions">
               <button type="button" className="btn-add" onClick={() => goTo('notes-new')}>
-                + 新增心得紀錄
+                + 新增心得筆記
               </button>
             </div>
           </>

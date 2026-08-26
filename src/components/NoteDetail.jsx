@@ -11,7 +11,7 @@ export default function NoteDetail({ note, goals, records, onEdit, onDelete, onB
   return (
     <div className="card note-detail">
       <button type="button" className="link-back" onClick={onBack}>
-        ← 返回心得紀錄
+        ← 返回心得筆記
       </button>
       <div className="note-detail-header">
         <div className="note-header-left">
@@ -34,7 +34,7 @@ export default function NoteDetail({ note, goals, records, onEdit, onDelete, onB
       )}
       {pendingDelete && (
         <ConfirmDialog
-          message="確定要刪除這篇心得紀錄嗎？"
+          message="確定要刪除這篇心得筆記嗎？"
           onConfirm={() => {
             onDelete(note.id)
             setPendingDelete(false)

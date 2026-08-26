@@ -59,9 +59,9 @@ export default function NoteForm({ note, goals, records, onSubmit, onCancel }) {
   return (
     <form className="card form" onSubmit={handleSubmit}>
       <button type="button" className="link-back" onClick={onCancel}>
-        ← 返回心得紀錄
+        ← 返回心得筆記
       </button>
-      <h2>{isEdit ? '編輯心得紀錄' : '新增心得紀錄'}</h2>
+      <h2>{isEdit ? '編輯心得筆記' : '新增心得筆記'}</h2>
       <label>
         內容 *
         <textarea
