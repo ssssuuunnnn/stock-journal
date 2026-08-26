@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { toShares } from '../lib/units'
 import ConfirmDialog from './ConfirmDialog'
+import StockCodeField from './StockCodeField'
 
 const emptyForm = {
   stockCode: '',
@@ -77,25 +78,12 @@ export default function GoalForm({ goal, existingGoals = [], onSubmit, onEditExi
           ← 返回存股目標
         </button>
         <h2>{isEdit ? '編輯存股目標' : '新增存股目標'}</h2>
-        <div className="form-row">
-          <label>
-            股票代號 *
-            <input
-              value={form.stockCode}
-              onChange={(e) => update('stockCode', e.target.value)}
-              placeholder="例如 0050"
-              required
-            />
-          </label>
-          <label>
-            股票名稱
-            <input
-              value={form.stockName}
-              onChange={(e) => update('stockName', e.target.value)}
-              placeholder="例如 元大台灣50"
-            />
-          </label>
-        </div>
+        <StockCodeField
+          code={form.stockCode}
+          name={form.stockName}
+          onCodeChange={(value) => update('stockCode', value)}
+          onNameChange={(value) => update('stockName', value)}
+        />
         <div className="form-row">
           <label>
             目標張數 / 股數 *

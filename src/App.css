@@ -173,6 +173,52 @@
 .form textarea:focus-visible { border-color: var(--color-accent); outline-offset: 0; }
 .form input::placeholder,
 .form textarea::placeholder { color: color-mix(in srgb, var(--color-text) 65%, transparent); opacity: 1; }
+.stock-code-field { position: relative; }
+.stock-code-suggestions {
+  position: absolute;
+  z-index: 10;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin: 2px 0 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--color-bg);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--color-text) 20%, transparent);
+  max-height: 260px;
+  overflow-y: auto;
+}
+.stock-code-suggestions button {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+  width: 100%;
+  padding: 6px 8px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--color-text);
+  background: none;
+  border: none;
+  border-radius: var(--radius-md);
+  text-align: left;
+  cursor: pointer;
+}
+.stock-code-suggestions button:hover,
+.stock-code-suggestions button.active {
+  color: var(--color-bg);
+  background: var(--color-accent);
+}
+.stock-code-suggestion-code { font-weight: 600; }
+.stock-code-suggestion-name {
+  font-size: 12px;
+  color: color-mix(in srgb, var(--color-text) 65%, transparent);
+}
+.stock-code-suggestions button:hover .stock-code-suggestion-name,
+.stock-code-suggestions button.active .stock-code-suggestion-name {
+  color: color-mix(in srgb, var(--color-bg) 80%, transparent);
+}
 .char-counter {
   margin-top: var(--space-1);
   font-size: 12px;
