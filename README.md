@@ -48,4 +48,4 @@ npm run preview   # 本機預覽建置結果
 - Service Worker 會把靜態資源（HTML/CSS/JS/圖示）快取起來，離線或訊號不好時也能開啟 App 本體（資料本來就存在 localStorage，跟網路無關）。
 - `registerType: 'autoUpdate'`：改版部署後，使用者下次開啟會自動抓新版本、背景更新，不會跳更新提示。
 - 只有 `npm run build` 的正式產物（`dist/sw.js`、`dist/manifest.webmanifest`）才有 PWA 行為；`npm run dev` 底下 Service Worker 是空的（vite-plugin-pwa 的預設行為），要測試安裝或離線效果請用 `npm run build && npm run preview`。
-- PWA 圖示（`public/pwa-*.png`、`public/apple-touch-icon.png`）是依 Broadsheet 設計系統重新畫的（襯線「存」字 + 青色底線），跟網站本身視覺一致；瀏覽器分頁的 `favicon.svg` 目前還是舊的紫色圖示，沒有一併更換。
+- PWA 圖示（`public/pwa-*.png`、`public/apple-touch-icon.png`）是依 Broadsheet 設計系統重新畫的（襯線「存」字 + 青色底線），跟網站本身視覺一致；瀏覽器分頁的 `favicon.svg` 目前還是舊的紫色圖示，沒有一併更換。   
