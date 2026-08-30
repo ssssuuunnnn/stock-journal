@@ -1,0 +1,53 @@
+name: Update TW close prices
+
+on:
+  schedule:
+    # 每週一~五 08:30 UTC ≈ 台北 16:30（收盤後，資料通常已發布）。
+    # GitHub 排程是盡力而為，可能延遲數分鐘~數十分鐘，對每日一次的資料無妨。
+    - cron: '30 8 * * 1-5'
+  workflow_dispatch:
+
+# 連 60 天沒有任何 activity 時 GitHub 會停用排程；只要它天天 commit 資料就會保持啟用。
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: update-close-prices
+  cancel-in-progress: false
+
+jobs:
+  update:
+    # 避免 fork 也跟著跑排程
+    if: github.repository == 'ssssuuunnnn/stock-journal'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Fetch close prices
+        run: npm run update:prices
+
+      - name: Commit if changed
+        id: commit
+        run: |
+          if git diff --quiet -- src/data/twClosePrices.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "收盤價沒有變更，略過 commit。"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/twClosePrices.json
+          git commit -m "data: update TW close prices ($(date -u +%Y-%m-%d))"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      # 用 GITHUB_TOKEN 推的 commit 不會觸發 deploy.yml 的 push 事件，所以手動叫它跑一次
+      - name: Trigger Pages deploy
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml

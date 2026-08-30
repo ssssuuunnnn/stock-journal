@@ -22,6 +22,8 @@
   --color-accent-800: #004961;
   --color-accent-2-700: #aa0b56;
   --color-process-yellow: #edbb00; /* 疊印數字（.overview-total）的第三個印版用色 */
+  --color-gain: #aa0b56; /* 未實現損益：獲利（台股慣例紅） */
+  --color-loss: #0f7a52; /* 未實現損益：虧損（台股慣例綠） */
 
   --font-heading: 'Source Serif 4', 'Noto Serif TC', serif;
   --font-body: 'Source Serif 4', 'Noto Serif TC', serif;

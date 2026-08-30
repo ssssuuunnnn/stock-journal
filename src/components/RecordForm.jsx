@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { toShares } from '../lib/units'
+import { closePriceDate, getClosePrice } from '../lib/closePrices'
 
 function today() {
   return new Date().toISOString().slice(0, 10)
@@ -11,6 +12,7 @@ const emptyForm = {
   unit: 'lot',
   qty: '',
   price: '',
+  priceAuto: false, // 成交價是自動帶入的收盤價（使用者尚未手動改過）
   note: '',
 }
 
@@ -18,7 +20,23 @@ export default function RecordForm({ onAdd, onCancel }) {
   const [form, setForm] = useState(emptyForm)
 
   function update(field, value) {
-    setForm((prev) => ({ ...prev, [field]: value }))
+    setForm((prev) => {
+      const next = { ...prev, [field]: value }
+      if (field === 'stockCode') {
+        // 換股票代號時，若成交價還沒被手動填過，就帶入該股最新收盤價
+        const close = getClosePrice(value)
+        if (close != null && (prev.price === '' || prev.priceAuto)) {
+          next.price = String(close)
+          next.priceAuto = true
+        } else if (close == null && prev.priceAuto) {
+          next.price = ''
+          next.priceAuto = false
+        }
+      } else if (field === 'price') {
+        next.priceAuto = false
+      }
+      return next
+    })
   }
 
   function handleSubmit(e) {
@@ -91,6 +109,11 @@ export default function RecordForm({ onAdd, onCancel }) {
             onChange={(e) => update('price', e.target.value)}
             placeholder="例如 135.5"
           />
+          {form.priceAuto && (
+            <span className="field-hint">
+              已帶入 {closePriceDate.replace(/-/g, '/')} 收盤價，可自行修改
+            </span>
+          )}
         </label>
       </div>
       <label>

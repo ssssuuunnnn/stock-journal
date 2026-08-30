@@ -9,7 +9,8 @@
     "postbuild": "cp dist/index.html dist/404.html",
     "lint": "oxlint",
     "preview": "vite preview",
-    "update:stocks": "node scripts/fetch-stock-list.mjs"
+    "update:stocks": "node scripts/fetch-stock-list.mjs",
+    "update:prices": "node scripts/fetch-close-prices.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",
