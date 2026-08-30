@@ -354,6 +354,10 @@ button[type='submit']:active,
   font-style: italic;
   color: var(--color-neutral-700);
 }
+.goal-close {
+  margin-top: var(--space-2);
+  font-size: 13px;
+}
 
 /* — 紀錄表 — */
 .table-toolbar {
@@ -699,6 +703,11 @@ tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparen
   margin: var(--space-1) 0 0;
   font-size: 13px;
   font-style: italic;
+  color: var(--color-neutral-700);
+}
+.overview-goal-close {
+  margin: var(--space-2) 0 0;
+  font-size: 13px;
   color: var(--color-neutral-700);
 }
 

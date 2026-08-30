@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { formatShares } from '../lib/units'
+import { closePriceDateShort, getClosePrice } from '../lib/closePrices'
 import ConfirmDialog from './ConfirmDialog'
 
 export default function GoalList({ goals, holdingsByStock, onEdit, onDelete }) {
@@ -14,6 +15,7 @@ export default function GoalList({ goals, holdingsByStock, onEdit, onDelete }) {
       <div className="goal-grid">
         {goals.map((goal) => {
           const owned = holdingsByStock[goal.stockCode] || 0
+          const close = getClosePrice(goal.stockCode)
           const pct = goal.targetShares > 0 ? Math.min(100, (owned / goal.targetShares) * 100) : 0
           const pctColor = `color-mix(in srgb, var(--color-accent-800) ${Math.round(pct)}%, var(--color-accent-400))`
           return (
@@ -42,6 +44,12 @@ export default function GoalList({ goals, holdingsByStock, onEdit, onDelete }) {
                   {pct.toFixed(1)}%
                 </span>
               </div>
+              {close != null && (
+                <p className="muted goal-close">
+                  {closePriceDateShort} 收盤 {close}
+                  {owned > 0 && ` · 持股現值 ${Math.round(owned * close).toLocaleString()}`}
+                </p>
+              )}
               {goal.note && <p className="muted note">{goal.note}</p>}
             </div>
           )

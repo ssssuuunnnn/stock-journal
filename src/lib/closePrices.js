@@ -4,6 +4,11 @@ import data from '../data/twClosePrices.json'
 
 export const closePriceDate = data.date // 例如 '2026-08-28'
 
+export const closePriceDateShort = (() => {
+  const [, m, d] = data.date.split('-')
+  return `${Number(m)}/${Number(d)}` // 例如 '8/28'
+})()
+
 // 找不到（未上市、代號有誤、當日暫停交易…）時回傳 null。
 export function getClosePrice(stockCode) {
   if (!stockCode) return null

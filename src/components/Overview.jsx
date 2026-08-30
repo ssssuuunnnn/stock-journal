@@ -5,7 +5,7 @@ import {
   investmentBreakdown,
   portfolioValuation,
 } from '../lib/overviewMetrics'
-import { closePriceDate, getClosePrice } from '../lib/closePrices'
+import { closePriceDate, closePriceDateShort, getClosePrice } from '../lib/closePrices'
 import ContributionHeatmap from './ContributionHeatmap'
 
 function formatDateSlash(iso) {
@@ -203,6 +203,7 @@ export default function Overview({ goals, records, holdingsByStock }) {
                   goal.targetShares > 0 ? Math.min(100, (owned / goal.targetShares) * 100) : 0
                 const goalPctColor = `color-mix(in srgb, var(--color-accent-800) ${Math.round(goalPct)}%, var(--color-accent-400))`
                 const series = goalAchievementSeries(records, goal)
+                const close = getClosePrice(goal.stockCode)
                 return (
                   <div className="overview-goal" key={goal.id}>
                     <div className="overview-goal-header">
@@ -303,6 +304,13 @@ export default function Overview({ goals, records, holdingsByStock }) {
                       {formatShares(owned)}
                       <span className="muted">／目標 {formatShares(goal.targetShares)}</span>
                     </div>
+                    {close != null && (
+                      <p className="overview-goal-close">
+                        {closePriceDateShort} 收盤 {close}
+                        {owned > 0 &&
+                          ` · 現值 ${Math.round(owned * close).toLocaleString()}`}
+                      </p>
+                    )}
                     {goal.note && <p className="overview-goal-note">{goal.note}</p>}
                   </div>
                 )
