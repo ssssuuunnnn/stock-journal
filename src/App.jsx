@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocalStorage } from './hooks/useLocalStorage'
+import { useSwipe } from './hooks/useSwipe'
 import { createId } from './lib/id'
 import About from './components/About'
 import AboutAuthor from './components/AboutAuthor'
@@ -113,6 +114,19 @@ export default function App() {
     }
   }
 
+  // 手機上左右滑動切換分頁；只在四個列表頁之間切換（表單/詳細頁不攔），點選切換照舊。
+  const tabKeys = TABS.map((t) => t.key)
+  const canSwipeTabs = tab != null && effectiveView === tab
+  function swipeToTab(delta) {
+    if (!canSwipeTabs) return
+    const next = tabKeys[tabKeys.indexOf(tab) + delta]
+    if (next) goTo(next)
+  }
+  const swipeHandlers = useSwipe({
+    onSwipeLeft: () => swipeToTab(1),
+    onSwipeRight: () => swipeToTab(-1),
+  })
+
   const holdingsByStock = useMemo(() => {
     return records.reduce((acc, r) => {
       acc[r.stockCode] = (acc[r.stockCode] || 0) + r.shares
@@ -177,7 +191,7 @@ export default function App() {
         ))}
       </nav>
 
-      <main>
+      <main {...swipeHandlers}>
         {effectiveView === 'goals' && (
           <>
             <GoalList
