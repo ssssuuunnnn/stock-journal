@@ -711,6 +711,80 @@ tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparen
   color: var(--color-neutral-700);
 }
 
+/* — 即將除權息提示（存股目標項目下方，GoalList 與 Overview 共用）— */
+.dividend-notice {
+  margin-top: var(--space-2);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--color-neutral-700);
+}
+.dividend-badge {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 1px 8px;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--color-bg);
+  background: var(--color-accent-2);
+  border-radius: 999px;
+}
+.dividend-cal-link {
+  white-space: nowrap;
+  color: var(--color-accent-700);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.dividend-cal-link:hover { color: var(--color-accent); }
+
+/* — 除權息預告頁 — */
+.dividend-page-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-2);
+}
+.dividend-page-header h3 { margin: 0; font-size: 25px; }
+.dividend-page-hint {
+  max-width: 60ch;
+  margin-bottom: var(--space-4);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.dividend-page-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  font-size: 13px;
+  color: var(--color-neutral-700);
+  cursor: pointer;
+}
+.dividend-page-toggle input {
+  width: auto;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+.dividend-table td.num,
+.dividend-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.dividend-table td.code { font-weight: 600; white-space: nowrap; }
+.dividend-table tr.is-past { color: var(--color-neutral-600); }
+.dividend-table tr.is-past .dividend-badge { background: var(--color-neutral-600); }
+.dividend-table tr.is-goal td:first-child { box-shadow: inset 3px 0 0 var(--color-accent); }
+.dividend-goal-tag {
+  margin-left: 6px;
+  padding: 0 6px;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-accent-700);
+  background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  border-radius: 999px;
+}
+
 .overview-records-header {
   display: flex;
   align-items: baseline;
@@ -898,13 +972,13 @@ tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparen
   .app-header h1 { font-size: 34px; }
   .dateline { font-size: 10px; }
   .tabs {
-    gap: var(--space-3);
+    gap: var(--space-2);
     margin: var(--space-6) 0;
     overflow-x: auto;          /* 極窄螢幕改成可橫向捲動，而不是讓分頁名稱斷行 */
     scrollbar-width: none;
   }
   .tabs::-webkit-scrollbar { display: none; }
-  .tab { font-size: 16px; }
+  .tab { font-size: 15px; }
   .goal-grid { grid-template-columns: 1fr; row-gap: var(--space-6); }
   .goal-card-header strong { font-size: 22px; }
   .goal-numbers .pct { font-size: 19px; }

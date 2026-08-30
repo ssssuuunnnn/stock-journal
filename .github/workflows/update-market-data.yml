@@ -1,10 +1,10 @@
-name: Update TW close prices
+name: Update TW market data
 
 on:
   schedule:
-    # 每週一~五 08:30 UTC ≈ 台北 16:30（收盤後，資料通常已發布）。
+    # 每天 08:30 UTC ≈ 台北 16:30（收盤後，資料通常已發布）。
     # GitHub 排程是盡力而為，可能延遲數分鐘~數十分鐘，對每日一次的資料無妨。
-    - cron: '30 8 * * 1-5'
+    - cron: '30 8 * * *'
   workflow_dispatch:
 
 # 連 60 天沒有任何 activity 時 GitHub 會停用排程；只要它天天 commit 資料就會保持啟用。
@@ -13,7 +13,7 @@ permissions:
   actions: write
 
 concurrency:
-  group: update-close-prices
+  group: update-market-data
   cancel-in-progress: false
 
 jobs:
@@ -30,18 +30,22 @@ jobs:
       - name: Fetch close prices
         run: npm run update:prices
 
+      - name: Fetch ex-dividend forecast
+        run: npm run update:dividends
+
       - name: Commit if changed
         id: commit
         run: |
-          if git diff --quiet -- src/data/twClosePrices.json; then
+          FILES="src/data/twClosePrices.json src/data/twDividends.json"
+          if git diff --quiet -- $FILES; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
-            echo "收盤價沒有變更，略過 commit。"
+            echo "市場資料沒有變更，略過 commit。"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/twClosePrices.json
-          git commit -m "data: update TW close prices ($(date -u +%Y-%m-%d))"
+          git add $FILES
+          git commit -m "data: update TW market data ($(date -u +%Y-%m-%d))"
           git push
           echo "changed=true" >> "$GITHUB_OUTPUT"
 

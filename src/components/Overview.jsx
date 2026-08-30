@@ -7,6 +7,7 @@ import {
 } from '../lib/overviewMetrics'
 import { closePriceDate, closePriceDateShort, getClosePrice } from '../lib/closePrices'
 import ContributionHeatmap from './ContributionHeatmap'
+import DividendNotice from './DividendNotice'
 
 function formatDateSlash(iso) {
   return iso ? iso.replace(/-/g, '/') : ''
@@ -311,6 +312,7 @@ export default function Overview({ goals, records, holdingsByStock }) {
                           ` · 現值 ${Math.round(owned * close).toLocaleString()}`}
                       </p>
                     )}
+                    <DividendNotice stockCode={goal.stockCode} stockName={goal.stockName} />
                     {goal.note && <p className="overview-goal-note">{goal.note}</p>}
                   </div>
                 )

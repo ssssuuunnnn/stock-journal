@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { formatShares } from '../lib/units'
 import { closePriceDateShort, getClosePrice } from '../lib/closePrices'
 import ConfirmDialog from './ConfirmDialog'
+import DividendNotice from './DividendNotice'
 
 export default function GoalList({ goals, holdingsByStock, onEdit, onDelete }) {
   const [pendingDelete, setPendingDelete] = useState(null)
@@ -50,6 +51,7 @@ export default function GoalList({ goals, holdingsByStock, onEdit, onDelete }) {
                   {owned > 0 && ` · 持股現值 ${Math.round(owned * close).toLocaleString()}`}
                 </p>
               )}
+              <DividendNotice stockCode={goal.stockCode} stockName={goal.stockName} />
               {goal.note && <p className="muted note">{goal.note}</p>}
             </div>
           )

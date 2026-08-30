@@ -4,6 +4,7 @@ import { useSwipe } from './hooks/useSwipe'
 import { createId } from './lib/id'
 import About from './components/About'
 import AboutAuthor from './components/AboutAuthor'
+import DividendList from './components/DividendList'
 import GoalForm from './components/GoalForm'
 import GoalList from './components/GoalList'
 import NoteDetail from './components/NoteDetail'
@@ -19,6 +20,7 @@ const TABS = [
   { key: 'goals', label: '存股目標' },
   { key: 'records', label: '買入紀錄' },
   { key: 'notes', label: '心得筆記' },
+  { key: 'dividends', label: '除權息' },
 ]
 // 路由（網址路徑）：goals / records / overview / notes 幾個分頁，goals、records、notes 各自再加獨立的「新增」頁面
 const VIEW_PATHS = {
@@ -32,6 +34,7 @@ const VIEW_PATHS = {
   'notes-edit': 'notes/edit',
   'notes-detail': 'notes/detail',
   overview: 'overview',
+  dividends: 'dividends',
   about: 'about',
   author: 'author',
 }
@@ -86,7 +89,9 @@ export default function App() {
         ? 'notes'
         : effectiveView === 'overview'
           ? 'overview'
-          : null
+          : effectiveView === 'dividends'
+            ? 'dividends'
+            : null
 
   useEffect(() => {
     function onPopState() {
@@ -331,6 +336,7 @@ export default function App() {
         {view === 'overview' && (
           <Overview goals={goals} records={records} holdingsByStock={holdingsByStock} />
         )}
+        {view === 'dividends' && <DividendList goals={goals} />}
         {view === 'about' && <About onBack={() => goTo('goals')} />}
         {view === 'author' && <AboutAuthor onBack={() => goTo('goals')} />}
       </main>

@@ -10,7 +10,8 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "update:stocks": "node scripts/fetch-stock-list.mjs",
-    "update:prices": "node scripts/fetch-close-prices.mjs"
+    "update:prices": "node scripts/fetch-close-prices.mjs",
+    "update:dividends": "node scripts/fetch-dividends.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",
