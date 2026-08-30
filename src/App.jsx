@@ -4,6 +4,7 @@ import { useSwipe } from './hooks/useSwipe'
 import { createId } from './lib/id'
 import About from './components/About'
 import AboutAuthor from './components/AboutAuthor'
+import Changelog from './components/Changelog'
 import DividendList from './components/DividendList'
 import GoalForm from './components/GoalForm'
 import GoalList from './components/GoalList'
@@ -37,6 +38,7 @@ const VIEW_PATHS = {
   dividends: 'dividends',
   about: 'about',
   author: 'author',
+  changelog: 'changelog',
 }
 const DEFAULT_VIEW = 'goals'
 // import.meta.env.BASE_URL 是 vite.config.js 設的 '/stock-daily/'，本機開發與 GitHub Pages 都要用它當路徑前綴
@@ -339,6 +341,7 @@ export default function App() {
         {view === 'dividends' && <DividendList goals={goals} />}
         {view === 'about' && <About onBack={() => goTo('goals')} />}
         {view === 'author' && <AboutAuthor onBack={() => goTo('goals')} />}
+        {view === 'changelog' && <Changelog onBack={() => goTo('goals')} />}
       </main>
 
       <footer className="app-footer muted">
@@ -351,6 +354,17 @@ export default function App() {
         <button type="button" className="footer-link" onClick={() => goTo('author')}>
           關於作者
         </button>
+        {' · '}
+        <button type="button" className="footer-link" onClick={() => goTo('changelog')}>
+          更新紀錄
+        </button>
+        {' · '}
+        <a
+          className="footer-link"
+          href={`mailto:sun889999@gmail.com?subject=${encodeURIComponent('存股日記回饋')}`}
+        >
+          意見回饋
+        </a>
       </footer>
     </div>
   )

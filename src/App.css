@@ -511,6 +511,29 @@ tbody tr:hover { background: color-mix(in srgb, var(--color-text) 4%, transparen
   margin-bottom: var(--space-4);
 }
 
+/* — 更新紀錄 — */
+.changelog-entry {
+  max-width: 640px;
+  margin-bottom: var(--space-6);
+}
+.changelog-date {
+  margin-bottom: var(--space-2);
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-neutral-700);
+}
+.changelog-entry ul {
+  margin: 0;
+  padding-left: 1.3em;
+}
+.changelog-entry li {
+  margin-bottom: 6px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
 /* — 確認刪除視窗 — */
 .modal-overlay {
   position: fixed;
