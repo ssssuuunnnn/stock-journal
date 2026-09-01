@@ -13,8 +13,30 @@ const emptyForm = {
   qty: '',
   price: '',
   priceAuto: false, // 成交價是自動帶入的收盤價（使用者尚未手動改過）
+  broker: '',
   note: '',
 }
+
+// 常見券商，供 datalist 快速選填（仍可自行輸入其他名稱）
+const BROKERS = [
+  '元大',
+  '國泰',
+  '富邦',
+  '凱基',
+  '群益',
+  '永豐金',
+  '統一',
+  '兆豐',
+  '玉山',
+  '第一金',
+  '華南永昌',
+  '台新',
+  '中信',
+  '日盛',
+  '新光',
+  '元富',
+  '康和',
+]
 
 export default function RecordForm({ onAdd, onCancel }) {
   const [form, setForm] = useState(emptyForm)
@@ -48,6 +70,7 @@ export default function RecordForm({ onAdd, onCancel }) {
       date: form.date,
       shares: toShares(form.qty, form.unit),
       price: form.price === '' ? null : Number(form.price),
+      broker: form.broker.trim(),
       note: form.note.trim(),
     })
     setForm({ ...emptyForm, date: form.date })
@@ -116,6 +139,20 @@ export default function RecordForm({ onAdd, onCancel }) {
           )}
         </label>
       </div>
+      <label>
+        券商（選填）
+        <input
+          list="broker-list"
+          value={form.broker}
+          onChange={(e) => update('broker', e.target.value)}
+          placeholder="例如 元大"
+        />
+        <datalist id="broker-list">
+          {BROKERS.map((b) => (
+            <option key={b} value={b} />
+          ))}
+        </datalist>
+      </label>
       <label>
         備註
         <input

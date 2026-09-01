@@ -45,6 +45,7 @@ export default function RecordTable({ records, onDelete }) {
               <th>股數</th>
               <th>成交價</th>
               <th>金額</th>
+              <th>券商</th>
               <th>備註</th>
               <th></th>
             </tr>
@@ -57,6 +58,7 @@ export default function RecordTable({ records, onDelete }) {
                 <td>{formatShares(r.shares)}</td>
                 <td>{r.price != null ? r.price : '—'}</td>
                 <td>{r.price != null ? (r.price * r.shares).toLocaleString() : '—'}</td>
+                <td className="muted">{r.broker || '—'}</td>
                 <td className="muted">{r.note || '—'}</td>
                 <td>
                   <button className="link-btn" onClick={() => setPendingDelete(r)}>
